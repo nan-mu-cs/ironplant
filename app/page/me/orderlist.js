@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * @authors Your Name (you@example.org)
  * @date    2015-10-18 14:38:47
  * @version $Id$
@@ -12,7 +12,8 @@ var Global = require('../../util/global');
 var API = require('../../network/api');
 var Util = require('../../util/util');
 var Loading = require('../loading');
-
+var GoodsDetial = require('../goodsdetail');
+var OrderDetail = require('./orderdetail');
 var PAGESIZE = 6;
 
 var {
@@ -34,7 +35,18 @@ var resultsCache = {
   totalForQuery: {},
   pageIndex:1,
 };
-
+var testdata = [
+  {
+    "title":"good1",
+    "order_sn":123456,
+    "order_amount":30
+  },
+  {
+    "title":"good1",
+    "order_sn":123456,
+    "order_amount":30
+  }
+];
 var OrderList = React.createClass({
   getInitialState: function() {
     return {
@@ -46,7 +58,12 @@ var OrderList = React.createClass({
   },
 
   componentDidMount: function() {
-    this._getOrderList(1);
+    //this._getOrderList(1);
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(testdata),
+      loaded:true,
+      loadingMore:false,
+    });
   },
 
   _getOrderList:function(pageIndex){
@@ -115,13 +132,30 @@ var OrderList = React.createClass({
       );
     }
   },
-
+  _showProductDetail(){
+    this.props.navigator.push({
+      title: '商品详情',
+      component: GoodsDetial,
+      passProps:{
+        data: 'test'
+      }
+    });
+  },
+  _showOrderDetail(){
+    this.props.navigator.push({
+      title: '订单详情',
+      component: OrderDetail,
+      passProps:{
+        data: 'test'
+      }
+    });
+  },
   _renderListItem:function(rowData){
     var imageViews = [];
     var goods = rowData.orders_goods;
     if(goods){
       for (var i = 0; i < goods.length&&i<3; i++) {
-        imageViews.push(<Image style={[styles.thumb]} source={{uri:goods[i].goods_image}} />);
+        imageViews.push(<Image style={[styles.thumb]} source={{uri:'http://placehold.it/100x100'}} />);
       };
     }
     return (
@@ -134,12 +168,20 @@ var OrderList = React.createClass({
               <Text style={{fontSize:12,color:'#929aa2',marginLeft:5}}>{rowData.order_sn}</Text>
             </View>
           </View>
-          <Text>查看订单</Text>
+          <Text onPress={this._showOrderDetail}>查看订单</Text>
         </View>
         <View style={styles.line}/>
+        <TouchableHighlight underlayColor="#dad9d7" onPress={this._showProductDetail}>
         <View style={[styles.row,{padding:10}]}>
-          {imageViews}
+            <View style={{width:60}}>
+              <Image style={[styles.thumb]} source={{uri:'http://placehold.it/100x100'}} />
+            </View>
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+              <Text>这是一个产品的产品名</Text>
+            </View>
+          {/*{imageViews}*/}
         </View>
+        </TouchableHighlight>
         <View style={styles.line}/>
         <View style={[styles.row,{height:40,alignItems:'center',paddingLeft:10}]}>
           <Text style={{fontSize:14,color:'#929aa2'}}>实付款:</Text>
@@ -174,8 +216,8 @@ var styles = StyleSheet.create({
     marginBottom:110,
   },
   thumb: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     marginRight: 10
   },
   scrollSpinner: {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * @authors Your Name (you@example.org)
  * @date    2015-10-18 14:38:47
  * @version $Id$
@@ -19,8 +19,19 @@ var {
     ListView,
     TouchableHighlight,
 } = React;
-
-var Market = React.createClass({
+var testdata = [
+  {
+    "consignee":"杨凯",
+    "phone_mob":"15700080071",
+    "address":"浙江大学玉泉校区"
+  },
+  {
+    "consignee":"杨凯",
+    "phone_mob":"15700080071",
+    "address":"浙江大学玉泉校区"
+  }
+];
+var AddressManager = React.createClass({
   getInitialState: function() {
     return {
       dataSource:new ListView.DataSource({rowHasChanged:(row1,row2) =>row1!==row2}),
@@ -29,7 +40,11 @@ var Market = React.createClass({
   },
 
   componentDidMount: function() {
-    this._getAddressList();
+    //this._getAddressList();
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(testdata),
+      loaded:true,
+    });
   },
 
   _getAddressList:function(){
@@ -94,4 +109,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = Market;
+module.exports = AddressManager;
